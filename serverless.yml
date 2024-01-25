@@ -1,0 +1,101 @@
+service: bank
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-2
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource:
+        - arn:aws:dynamodb:us-east-2:943766074476:table/accountTypesTable
+        - arn:aws:dynamodb:us-east-2:943766074476:table/banksTable
+        - arn:aws:dynamodb:us-east-2:943766074476:table/bankAccountsTable
+
+functions:
+  accountTypeCreate:
+    handler: src/accountTypeCreate.accountTypeCreate
+    events:
+      - httpApi:
+          path: /account-type/create
+          method: post
+  accountTypeList:
+    handler: src/accountTypeList.accountTypeList
+    events:
+      - httpApi:
+          path: /account-type/list
+          method: post
+  accountTypeDelete:
+    handler: src/accountTypeDelete.accountTypeDelete
+    events:
+      - httpApi:
+          path: /account-type/delete
+          method: post
+  bankCreate:
+    handler: src/bankCreate.bankCreate
+    events:
+      - httpApi:
+          path: /bank/create
+          method: post
+  bankList:
+    handler: src/bankList.bankList
+    events:
+      - httpApi:
+          path: /bank/list
+          method: post
+  bankDelete:
+    handler: src/bankDelete.bankDelete
+    events:
+      - httpApi:
+          path: /bank/delete
+          method: post
+  bankAccountCreate:
+    handler: src/bankAccountCreate.bankAccountCreate
+    events:
+      - httpApi:
+          path: /bank-account/create
+          method: post
+
+resources:
+  Resources:
+    accountTypesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: accountTypesTable
+        AttributeDefinitions:
+          - AttributeName: idAccountType
+            AttributeType: S
+        KeySchema:
+          - AttributeName: idAccountType
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    banksTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: banksTable
+        AttributeDefinitions:
+          - AttributeName: idBank
+            AttributeType: S
+        KeySchema:
+          - AttributeName: idBank
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    bankAccountsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: bankAccountsTable
+        AttributeDefinitions:
+          - AttributeName: idBankAccount
+            AttributeType: S
+        KeySchema:
+          - AttributeName: idBankAccount
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
